@@ -3,9 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Streaming</title>
+    <title>Live Stream Hub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #2c2c2c;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+            color: #00ccff;
+        }
+        #choice, #adminInterface, #viewerInterface {
+            margin-top: 50px;
+            text-align: center;
+        }
+        button {
+            background-color: #00ccff;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 1.2em;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background-color: #0099cc;
+            transform: scale(1.05);
+        }
+        video {
+            width: 80%;
+            max-width: 800px;
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 204, 255, 0.5);
+            margin: 20px auto;
+            display: block;
+        }
+        #adminInterface, #viewerInterface {
+            display: none;
+        }
+        @media (max-width: 600px) {
+            button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+            video {
+                width: 90%;
+            }
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>Live Stream Hub</h1>
+    </header>
+
     <!-- Initial choice screen -->
     <div id="choice">
         <button id="adminBtn">Admin</button>
@@ -13,13 +82,13 @@
     </div>
 
     <!-- Admin interface: preview video and start streaming button -->
-    <div id="adminInterface" style="display:none;">
+    <div id="adminInterface">
         <video id="adminVideo" autoplay muted></video>
         <button id="startStreamBtn">Start Streaming</button>
     </div>
 
     <!-- Viewer interface: video player for the stream -->
-    <div id="viewerInterface" style="display:none;">
+    <div id="viewerInterface">
         <video id="viewerVideo" controls autoplay></video>
     </div>
 
@@ -87,14 +156,14 @@
                 const offer = await pc.createOffer();
                 await pc.setLocalDescription(offer);
 
-                // Send offer to Firebase
+                // Send offer to Firebase (signaling)
                 const roomRef = database.ref('rooms/room1/admin');
                 await roomRef.child('offer').set({
                     sdp: offer.sdp,
                     type: offer.type
                 });
 
-                // Listen for answer from server
+                // Listen for answer from server via Firebase
                 roomRef.child('answer').on('value', snapshot => {
                     const answer = snapshot.val();
                     if (answer) {
@@ -109,7 +178,7 @@
                     }
                 };
 
-                // Receive server's ICE candidates
+                // Receive server's ICE candidates from Firebase
                 roomRef.child('sfuCandidates').on('child_added', snapshot => {
                     const candidate = snapshot.val();
                     pc.addIceCandidate(new RTCIceCandidate(candidate));
