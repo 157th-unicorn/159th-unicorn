@@ -1,10 +1,10 @@
 # Live Streaming Website
 
-A website where an admin can live stream to over 25,000 viewers. The admin streams via WebRTC with Firebase signaling, and viewers watch via HLS.
+A website where an admin can live stream to over 25,000 viewers. The admin streams via WebRTC with Firebase signaling, and viewers watch via HLS. Features a modern, responsive design with CSS styling.
 
 ## Repository Structure
 
-- `index.html`: Client-side HTML with embedded JavaScript
+- `index.html`: Client-side HTML with embedded CSS and JavaScript
 - `server.js`: Server-side JavaScript
 - `package.json`: Server dependencies
 - `README.md`: Project instructions
