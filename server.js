@@ -13,7 +13,7 @@ const db = admin.database();
 // Create WebRTC peer connection
 const pc = new wrtc.RTCPeerConnection();
 
-// Listen for admin's offer
+// Listen for admin's offer via Firebase
 db.ref('rooms/room1/admin/offer').on('value', async snapshot => {
     const offer = snapshot.val();
     if (offer) {
@@ -34,7 +34,7 @@ pc.onicecandidate = event => {
     }
 };
 
-// Receive admin's ICE candidates
+// Receive admin's ICE candidates from Firebase
 db.ref('rooms/room1/admin/candidates').on('child_added', snapshot => {
     const candidate = snapshot.val();
     pc.addIceCandidate(new wrtc.RTCIceCandidate(candidate));
